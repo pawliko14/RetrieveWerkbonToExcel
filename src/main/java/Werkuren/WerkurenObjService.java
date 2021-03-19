@@ -16,7 +16,10 @@ public class WerkurenObjService {
 
 private List<WerkurenObj> werkurenObjetcs;
 
-    public WerkurenObjService() {
+private TimePeroid timeperoid;
+
+    public WerkurenObjService(TimePeroid timeperoid) {
+        this.timeperoid = timeperoid;
         this.werkurenObjetcs =  new ArrayList<>();
     }
 
@@ -90,16 +93,39 @@ private List<WerkurenObj> werkurenObjetcs;
     }
 
 
+
+
     public void retriveWerkurenList() throws SQLException {
         Connection connection = DBConnectorFATDB.dbConnector();
         ResultSet rs = null;
         PreparedStatement pstmnt= null;
 
+        String sql = "";
+
         try {
 
-                String sql = "select WERKNEMER ,WERKBONNUMMER , DATUM , BEGINTIJDH , BEGINTIJDM60 , EINDTIJDH ,EINDTIJDM60 \n" +
+            if(timeperoid == TimePeroid.YEAR) {
+                sql =   "select WERKNEMER ,WERKBONNUMMER , DATUM , BEGINTIJDH , BEGINTIJDM60 , EINDTIJDH ,EINDTIJDM60 \n" +
+                            "from werkuren w \n" +
+                            "where STATUS  = ?";
+            }
+            else if(timeperoid == TimePeroid.MONTH) {
+                sql =   "select WERKNEMER ,WERKBONNUMMER , DATUM , BEGINTIJDH , BEGINTIJDM60 , EINDTIJDH ,EINDTIJDM60 \n" +
                         "from werkuren w \n" +
-                        "where STATUS  = ?";
+                        "where STATUS  = ? and  DATUM > (current_date() - interval 30 day )";
+            }
+
+            else if(timeperoid == TimePeroid.WEEK) {
+                sql =   "select WERKNEMER ,WERKBONNUMMER , DATUM , BEGINTIJDH , BEGINTIJDM60 , EINDTIJDH ,EINDTIJDM60 \n" +
+                        "from werkuren w \n" +
+                        "where STATUS  = ? and DATUM > (current_date() - interval 7 day )";
+            }
+
+            else if(timeperoid == TimePeroid.TODAY) {
+                sql =   "select WERKNEMER ,WERKBONNUMMER , DATUM , BEGINTIJDH , BEGINTIJDM60 , EINDTIJDH ,EINDTIJDM60 \n" +
+                        "from werkuren w \n" +
+                        "where STATUS  = ? and DATUM > (current_date() - interval 1 day )";
+            }
 
                 pstmnt = connection.prepareStatement(sql);
                 pstmnt.setString(1, "20"); // not finished workbon
