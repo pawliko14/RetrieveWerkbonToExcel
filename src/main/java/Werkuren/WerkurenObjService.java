@@ -31,17 +31,10 @@ private TimePeroid timeperoid;
     public void getTimeDiffinMinute() throws Exception {
 
         for(int i = 0; i < werkurenObjetcs.size(); i++) {
-            String hour = werkurenObjetcs.get(i).getBEGINTIJDH();
-            String minutes = werkurenObjetcs.get(i).getBEGINTIJDM60();
-
-            String hour_2 = werkurenObjetcs.get(i).getEINDTIJDH();
-            String minutes_2 = werkurenObjetcs.get(i).getEINDTIJDM60();
-
-            Date beginDate = this.getBeginDate(hour, minutes);
-            Date endDate   = this.getEndDate(hour_2, minutes_2);
+            Date beginDate = this.getBeginDate(werkurenObjetcs.get(i).getBEGINTIJDH(), werkurenObjetcs.get(i).getBEGINTIJDM60());
+            Date endDate   = this.getEndDate(werkurenObjetcs.get(i).getEINDTIJDH(),  werkurenObjetcs.get(i).getEINDTIJDM60());
 
             long diffInMillies = Math.abs(beginDate.getTime() - endDate.getTime());
-
             int minutes_from_long = (int) ((diffInMillies / 1000) / 60);
 
             werkurenObjetcs.get(i).setTimeSpendInMinutes(minutes_from_long);
@@ -50,19 +43,16 @@ private TimePeroid timeperoid;
 
 
     public Date getBeginDate(String beginHour, String beginMinutes) throws Exception {
-
         return createTimeFromString(beginHour,beginMinutes);
 
     }
 
     public Date getEndDate(String beginHour, String beginMinutes) throws Exception {
-
         return createTimeFromString(beginHour,beginMinutes);
 
     }
 
     private Date createTimeFromString(String hours, String minutes) throws Exception {
-
         StringBuilder sb_hours = new StringBuilder(hours);
         StringBuilder sb_minutes = new StringBuilder(minutes);
         int parsed_hours  = Integer.parseInt(hours);
@@ -71,20 +61,17 @@ private TimePeroid timeperoid;
             throw new Exception("parsed hours is over 24h format");
         }
 
-        if(minutes.length() == 1)
-        {
+        if(minutes.length() == 1) {
             sb_minutes.insert(0,"0");
         }
-        if(hours.length() ==1)
-        {
+        if(hours.length() ==1) {
             sb_hours.insert(0,"0");
-
         }
 
         StringBuilder time = new StringBuilder();
-        time.append(sb_hours);
-        time.append(":");
-        time.append(sb_minutes);
+            time.append(sb_hours);
+            time.append(":");
+            time.append(sb_minutes);
 
         DateFormat sdf = new SimpleDateFormat("HH:mm"); // or "hh:mm" for 12 hour format
         Date date = sdf.parse(String.valueOf(time));
@@ -103,11 +90,10 @@ private TimePeroid timeperoid;
         String sql = "";
 
         try {
-
             if(timeperoid == TimePeroid.YEAR) {
                 sql =   "select WERKNEMER ,WERKBONNUMMER , DATUM , BEGINTIJDH , BEGINTIJDM60 , EINDTIJDH ,EINDTIJDM60 \n" +
                             "from werkuren w \n" +
-                            "where STATUS  = ?";
+                            "where STATUS  = ? and  DATUM > (current_date() - interval 365 day )";
             }
             else if(timeperoid == TimePeroid.MONTH) {
                 sql =   "select WERKNEMER ,WERKBONNUMMER , DATUM , BEGINTIJDH , BEGINTIJDM60 , EINDTIJDH ,EINDTIJDM60 \n" +
@@ -138,7 +124,6 @@ private TimePeroid timeperoid;
                     System.out.println("There is no record in database");
                 } else {
                     do {
-
                         WerkurenObj ob = new WerkurenObj(
                                 0,
                                 rs.getString("WERKNEMER"),
@@ -149,22 +134,17 @@ private TimePeroid timeperoid;
                                 rs.getString("EINDTIJDH"),
                                 rs.getString("EINDTIJDM60")
                         );
-
                         werkurenObjetcs.add(ob);
-
                     } while (rs.next());
                 }
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             System.out.println("Cannot Retrive from DB!");
         }
         finally {
-
             rs.close();
             pstmnt.close();
             connection.close();
         }
-
     }
 }

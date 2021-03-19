@@ -74,14 +74,11 @@ public class ExcelFIle {
             row.createCell(2)
                     .setCellValue(obj.getWERKBONNUMMER());
 
-
             row.createCell(3)
                     .setCellValue(obj.getDATUM() );
 
-
             row.createCell(4)
                     .setCellValue(obj.getBEGINTIJDH());
-
 
             row.createCell(5)
                     .setCellValue(obj.getBEGINTIJDM60() );
@@ -100,7 +97,6 @@ public class ExcelFIle {
 
 
         createFile(workbook);
-
         workbook.close();
     }
 
@@ -121,11 +117,8 @@ public class ExcelFIle {
     }
     else if(timePeroid == TimePeroid.TODAY) {
         fileName = Parameters.getFileName_today();
-
     }
 
-
-      //  File f = new File( Parameters.Parameters.getFullPathToSave());
         File f = new File( createDirectory());
 
 
@@ -160,9 +153,7 @@ public class ExcelFIle {
     private String createDirectory() {
 
         String pathToSave = Parameters.getPathToDirectory() + getCurrentDate();
-
         File directory = new File(pathToSave);
-
 
 
         if(directory.exists() ) {
@@ -179,7 +170,6 @@ public class ExcelFIle {
                 System.out.println("Cannot create directory : " + e);
             }
         }
-
 
          return directory.getAbsolutePath();
     }
